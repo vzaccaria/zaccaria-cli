@@ -20,6 +20,7 @@
     "autobadger": "0.0.2",
     "bluebird": "^2.9.14",
     "debug": "^2.1.3",
+    "git-hist": "0.0.5",
     "markdox": "^0.1.8"
   },
   "devDependencies": {
