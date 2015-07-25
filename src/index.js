@@ -45,6 +45,7 @@ var mod = () => {
         $mMaybe: monet.Maybe,
         $mDoMaybe: doMaybe,
         $m: monet.Maybe.fromNull,
+		$fs: fs,
         $f: {
             readLocal: (f) => fs.readFileAsync(path.join(__dirname, `/../../${f}`), 'utf8')
         }
