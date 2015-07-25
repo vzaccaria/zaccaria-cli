@@ -1,0 +1,33 @@
+{
+  "name": "zaccaria-cli",
+  "version": "0.0.1",
+  "description": "No name given yet",
+  "main": "index.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vzaccaria/zaccaria-cli.git"
+  },
+  "author": "Vittorio Zaccaria",
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/vzaccaria/zaccaria-cli/issues"
+  },
+  "homepage": "https://github.com/vzaccaria/zaccaria-cli",
+  "dependencies": {
+    "autobadger": "0.0.2",
+    "bluebird": "^2.9.14",
+    "debug": "^2.1.3",
+    "markdox": "^0.1.8"
+  },
+  "devDependencies": {
+    "babel": "^4.7.16",
+    "diy-build": "^1.0.8",
+    "xyz": "*",
+    "mocha": "*",
+    "chai": "*",
+    "chai-as-promised": "*"
+  }
+}
