@@ -22,6 +22,7 @@ Released under the BSD License.
 
 # New features
 
+-     export promisified fs -- [Jul 25th 15](../../commit/31e0d05a4573340cd92bec73536e2e76c97eff4c)
 -     add bluebrd, lodash, monet and shelljs -- [Jul 25th 15](../../commit/88ec7e6cca9f8a3e181043e510ae7b51685c9e23)
 
 # Bug fixes
