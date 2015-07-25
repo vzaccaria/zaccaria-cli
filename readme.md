@@ -1,2 +1,1 @@
-
-My swiss knife library for cli applications
+![status](https://img.shields.io/badge/build-ok-brightgreen.svg)
