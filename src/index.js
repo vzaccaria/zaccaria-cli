@@ -7,6 +7,7 @@ var fs		= promise.promisifyAll(require('fs'))
 var monet	= require('monet')
 var path	= require('path')
 var $m		= monet.Maybe.fromNull
+var read = require('read-input')
 
 var {
     docopt
@@ -48,7 +49,8 @@ var mod = () => {
 		$fs: fs,
         $f: {
             readLocal: (f) => fs.readFileAsync(path.join(__dirname, `/../../${f}`), 'utf8')
-        }
+        },
+		$r: read
     }
 }
 

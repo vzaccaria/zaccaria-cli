@@ -9,6 +9,7 @@ var fs = promise.promisifyAll(require("fs"));
 var monet = require("monet");
 var path = require("path");
 var $m = monet.Maybe.fromNull;
+var read = require("read-input");
 
 var _require = require("docopt");
 
@@ -50,7 +51,8 @@ var mod = function () {
             readLocal: function (f) {
                 return fs.readFileAsync(path.join(__dirname, "/../../" + f), "utf8");
             }
-        }
+        },
+        $r: read
     };
 };
 
