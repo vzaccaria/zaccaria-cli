@@ -4,12 +4,14 @@
 
 var shelljs = require("shelljs");
 var promise = require("bluebird");
+var Promise = promise;
 var _ = require("lodash");
 var fs = promise.promisifyAll(require("fs"));
 var monet = require("monet");
 var path = require("path");
 var $m = monet.Maybe.fromNull;
 var read = require("read-input");
+var tmp = require("tmp");
 
 var _require = require("docopt");
 
@@ -33,6 +35,18 @@ var getOption = function (a, b, def, o) {
     return $m(o[a]).orElse($m(o[b])).orSome(def);
 };
 
+var withTmpFilePromise = function (fun) {
+    return new Promise(function (res, rej) {
+        tmp.file(function (err, path, fd, cb) {
+            if (err) {
+                rej("cannot create temporary file");
+            } else {
+                fun(path).then(cb).then(res);
+            }
+        });
+    });
+};
+
 var mod = function () {
 
     return {
@@ -42,7 +56,7 @@ var mod = function () {
         _: _,
         $d: docopt,
         $o: getOption,
-
+        withTmp: withTmpFilePromise,
         $mMaybe: monet.Maybe,
         $mDoMaybe: doMaybe,
         $m: monet.Maybe.fromNull,
