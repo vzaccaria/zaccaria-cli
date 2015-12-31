@@ -41,7 +41,7 @@ var withTmpFilePromise = function (fun) {
             if (err) {
                 rej("cannot create temporary file");
             } else {
-                fun(path).then(cb).then(res);
+                Promise.resolve(fun(path)).then(cb).then(res);
             }
         });
     });
@@ -54,7 +54,7 @@ var withTmpDir = function (fun, opts) {
             if (err) {
                 rej("cannot create temporary file");
             } else {
-                fun(path).then(cb).then(res);
+                Promise.resolve(fun(path)).then(cb).then(res);
             }
         });
     });
