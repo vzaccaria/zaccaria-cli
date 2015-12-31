@@ -3,17 +3,17 @@
 var shelljs = require('shelljs')
 var promise = require('bluebird')
 var Promise = promise
-var _		= require('lodash')
-var fs		= promise.promisifyAll(require('fs'))
-var monet	= require('monet')
-var path	= require('path')
-var $m		= monet.Maybe.fromNull
+var _ = require('lodash')
+var fs = promise.promisifyAll(require('fs'))
+var monet = require('monet')
+var path = require('path')
+var $m = monet.Maybe.fromNull
 var read = require('read-input')
 var tmp = require('tmp')
 
 var {
     docopt
-}			= require('docopt')
+} = require('docopt')
 
 function doMaybe(gen) {
     "use strict"
@@ -36,9 +36,22 @@ var getOption = (a, b, def, o) => {
 }
 
 var withTmpFilePromise = (fun) => {
-    return new Promise( (res, rej) => {
-        tmp.file( (err, path, fd, cb) => {
-            if(err) {
+    return new Promise((res, rej) => {
+        tmp.file((err, path, fd, cb) => {
+            if (err) {
+                rej('cannot create temporary file')
+            } else {
+                fun(path).then(cb).then(res);
+            }
+        })
+    })
+}
+
+var withTmpDir = (fun, opts) => {
+    return new Promise((res, rej) => {
+        let opt = _.assign({}, opts)
+        tmp.dir(opt, (err, path, cb) => {
+            if (err) {
                 rej('cannot create temporary file')
             } else {
                 fun(path).then(cb).then(res);
@@ -57,14 +70,15 @@ var mod = () => {
         $d: docopt,
         $o: getOption,
         withTmp: withTmpFilePromise,
+        withTmpDir: withTmpDir,
         $mMaybe: monet.Maybe,
         $mDoMaybe: doMaybe,
         $m: monet.Maybe.fromNull,
-    $fs: fs,
+        $fs: fs,
         $f: {
             readLocal: (f) => fs.readFileAsync(path.join(__dirname, `/../../${f}`), 'utf8')
         },
-    $r: read
+        $r: read
     }
 }
 

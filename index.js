@@ -47,6 +47,19 @@ var withTmpFilePromise = function (fun) {
     });
 };
 
+var withTmpDir = function (fun, opts) {
+    return new Promise(function (res, rej) {
+        var opt = _.assign({}, opts);
+        tmp.dir(opt, function (err, path, cb) {
+            if (err) {
+                rej("cannot create temporary file");
+            } else {
+                fun(path).then(cb).then(res);
+            }
+        });
+    });
+};
+
 var mod = function () {
 
     return {
@@ -57,6 +70,7 @@ var mod = function () {
         $d: docopt,
         $o: getOption,
         withTmp: withTmpFilePromise,
+        withTmpDir: withTmpDir,
         $mMaybe: monet.Maybe,
         $mDoMaybe: doMaybe,
         $m: monet.Maybe.fromNull,
