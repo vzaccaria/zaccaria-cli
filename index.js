@@ -12,6 +12,7 @@ var path = require("path");
 var $m = monet.Maybe.fromNull;
 var read = require("read-input");
 var tmp = require("tmp");
+var yaml = require("js-yaml");
 
 var _require = require("docopt");
 
@@ -80,6 +81,7 @@ var mod = function () {
                 return fs.readFileAsync(path.join(__dirname, "/../../" + f), "utf8");
             }
         },
+        $yaml: yaml.safeLoad,
         $r: read
     };
 };

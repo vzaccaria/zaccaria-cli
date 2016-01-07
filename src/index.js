@@ -10,6 +10,7 @@ var path = require('path')
 var $m = monet.Maybe.fromNull
 var read = require('read-input')
 var tmp = require('tmp')
+var yaml = require('js-yaml')
 
 var {
     docopt
@@ -78,6 +79,7 @@ var mod = () => {
         $f: {
             readLocal: (f) => fs.readFileAsync(path.join(__dirname, `/../../${f}`), 'utf8')
         },
+        $yaml: yaml.safeLoad,
         $r: read
     }
 }
