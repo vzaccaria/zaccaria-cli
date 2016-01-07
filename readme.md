@@ -34,6 +34,8 @@ The following endpoints are exported:
     [here](https://github.com/raszi/node-tmp#options) for options (use
     `unsafeCleanup: true` to cleanup the directory).
 
+-   `$yaml(text)`: parse a yaml file into an object
+
 Author
 ------
 
