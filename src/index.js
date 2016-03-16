@@ -3,14 +3,15 @@
 var shelljs = require('shelljs')
 var promise = require('bluebird')
 var Promise = promise
-var _ = require('lodash')
-var fs = promise.promisifyAll(require('fs'))
-var monet = require('monet')
-var path = require('path')
-var $m = monet.Maybe.fromNull
-var read = require('read-input')
-var tmp = require('tmp')
-var yaml = require('js-yaml')
+var _       = require('lodash')
+var fs      = promise.promisifyAll(require('fs'))
+var monet   = require('monet')
+var path    = require('path')
+var $m      = monet.Maybe.fromNull
+var read    = require('read-input')
+var tmp     = require('tmp')
+var yaml    = require('js-yaml')
+var moment  = require('moment')
 
 var {
     docopt
@@ -80,7 +81,8 @@ var mod = () => {
             readLocal: (f) => fs.readFileAsync(path.join(__dirname, `/../../${f}`), 'utf8')
         },
         $yaml: yaml.safeLoad,
-        $r: read
+        $r: read,
+        $t: moment
     }
 }
 

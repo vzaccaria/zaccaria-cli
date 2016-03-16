@@ -35,6 +35,8 @@ The following endpoints are exported:
 
 -   `$yaml(text)`: parse a yaml file into an object
 
+-   `$t$`: moment library
+
 Author
 ------
 
