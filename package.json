@@ -1,6 +1,6 @@
 {
   "name": "zaccaria-cli",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "My single point library for cli apps",
   "main": "index.js",
   "scripts": {
