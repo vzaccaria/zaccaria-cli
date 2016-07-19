@@ -13,10 +13,20 @@ var $m = monet.Maybe.fromNull;
 var read = require("read-input");
 var tmp = require("tmp");
 var yaml = require("js-yaml");
+var moment = require("moment");
+var debug = require("debug");
+
+debug = debug("zaccaria-cli");
 
 var _require = require("docopt");
 
 var docopt = _require.docopt;
+
+var _docopt = function (data) {
+    var v = docopt(data);
+    debug("CLI options: " + JSON.stringify(v, 0, 4));
+    return v;
+};
 
 function doMaybe(gen) {
     "use strict";
@@ -40,8 +50,10 @@ var withTmpFilePromise = function (fun) {
     return new Promise(function (res, rej) {
         tmp.file(function (err, path, fd, cb) {
             if (err) {
+                debug("Cant create temporary file");
                 rej("cannot create temporary file");
             } else {
+                debug("Running 'fun' on temporary file " + path);
                 Promise.resolve(fun(path)).then(cb).then(res);
             }
         });
@@ -53,10 +65,22 @@ var withTmpDir = function (fun, opts) {
         var opt = _.assign({}, opts);
         tmp.dir(opt, function (err, path, cb) {
             if (err) {
+                debug("Cant create temporary dir");
                 rej("cannot create temporary file");
             } else {
+                debug("Running 'fun' with temporary dir " + path);
                 Promise.resolve(fun(path)).then(cb).then(res);
             }
+        });
+    });
+};
+
+var execAsync = function (cmd) {
+    return new Promise(function (resolve) {
+        debug("Executing command: " + cmd);
+        shelljs.exec(cmd, { async: true, silent: true }, function (code, stdout) {
+            debug("Result: " + code);
+            resolve({ code: code, stdout: stdout });
         });
     });
 };
@@ -68,7 +92,7 @@ var mod = function () {
         $b: promise,
         Promise: promise,
         _: _,
-        $d: docopt,
+        $d: _docopt,
         $o: getOption,
         withTmp: withTmpFilePromise,
         withTmpDir: withTmpDir,
@@ -78,11 +102,19 @@ var mod = function () {
         $fs: fs,
         $f: {
             readLocal: function (f) {
-                return fs.readFileAsync(path.join(__dirname, "/../../" + f), "utf8");
+                fs.readFileAsync(path.join(__dirname, "/../../" + f), "utf8");
+                debug("readLocal Deprecated; use readLocalAsync(__dirname, f)");
+            },
+            readLocalAsync: function (dn, f) {
+                var ff = path.join(dn, f);
+                debug("Reading local file: '" + ff + "'");
+                return fs.readFileAsync(ff, "utf8");
             }
         },
         $yaml: yaml.safeLoad,
-        $r: read
+        $r: read,
+        $t: moment,
+        $exec: execAsync
     };
 };
 

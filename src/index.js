@@ -1,27 +1,36 @@
 /* eslint quotes: [0, "double"], strict: [0] */
 
-var shelljs = require('shelljs')
-var promise = require('bluebird')
-var Promise = promise
-var _       = require('lodash')
-var fs      = promise.promisifyAll(require('fs'))
-var monet   = require('monet')
-var path    = require('path')
-var $m      = monet.Maybe.fromNull
-var read    = require('read-input')
-var tmp     = require('tmp')
-var yaml    = require('js-yaml')
-var moment  = require('moment')
+let shelljs = require('shelljs');
+let promise = require('bluebird');
+let Promise = promise;
+let _       = require('lodash');
+let fs      = promise.promisifyAll(require('fs'));
+let monet   = require('monet');
+let path    = require('path');
+let $m      = monet.Maybe.fromNull;
+let read    = require('read-input');
+let tmp     = require('tmp');
+let yaml    = require('js-yaml');
+let moment  = require('moment');
+let debug   = require('debug');
 
-var {
+debug = debug('zaccaria-cli');
+
+let {
     docopt
-} = require('docopt')
+} = require('docopt');
+
+let _docopt = (data) => {
+    let v = docopt(data);
+    debug(`CLI options: ${JSON.stringify(v, 0, 4)}`);
+    return v;
+};
 
 function doMaybe(gen) {
-    "use strict"
+    "use strict";
 
     function step(value) {
-        var result = gen.next(value);
+        let result = gen.next(value);
         if (result.done) {
             return result.value;
         }
@@ -30,46 +39,60 @@ function doMaybe(gen) {
     return step();
 }
 
-var getOption = (a, b, def, o) => {
-    "use strict"
+let getOption = (a, b, def, o) => {
+    "use strict";
     return $m(o[a])
         .orElse($m(o[b]))
-        .orSome(def)
+        .orSome(def);
 }
 
-var withTmpFilePromise = (fun) => {
+let withTmpFilePromise = (fun) => {
     return new Promise((res, rej) => {
         tmp.file((err, path, fd, cb) => {
             if (err) {
-                rej('cannot create temporary file')
+                debug(`Cant create temporary file`);
+                rej('cannot create temporary file');
             } else {
+                debug(`Running 'fun' on temporary file ${path}`);
                 Promise.resolve(fun(path)).then(cb).then(res);
             }
-        })
-    })
+        });
+    });
 }
 
-var withTmpDir = (fun, opts) => {
+let withTmpDir = (fun, opts) => {
     return new Promise((res, rej) => {
-        let opt = _.assign({}, opts)
+        let opt = _.assign({}, opts);
         tmp.dir(opt, (err, path, cb) => {
             if (err) {
-                rej('cannot create temporary file')
+                debug(`Cant create temporary dir`);
+                rej('cannot create temporary file');
             } else {
+                debug(`Running 'fun' with temporary dir ${path}`);
                 Promise.resolve(fun(path)).then(cb).then(res);
             }
-        })
-    })
-}
+        });
+    });
+};
 
-var mod = () => {
+let execAsync = (cmd) => {
+    return new Promise((resolve) => {
+        debug(`Executing command: ${cmd}`);
+        shelljs.exec(cmd, {async: true, silent: true}, (code, stdout) => {
+            debug(`Result: ${code}`);
+            resolve({code, stdout});
+        });
+    });
+};
+
+let mod = () => {
 
     return {
         $s: promise.promisifyAll(shelljs),
         $b: promise,
         Promise: promise,
         _: _,
-        $d: docopt,
+        $d: _docopt,
         $o: getOption,
         withTmp: withTmpFilePromise,
         withTmpDir: withTmpDir,
@@ -78,12 +101,21 @@ var mod = () => {
         $m: monet.Maybe.fromNull,
         $fs: fs,
         $f: {
-            readLocal: (f) => fs.readFileAsync(path.join(__dirname, `/../../${f}`), 'utf8')
+            readLocal: (f) => {
+                fs.readFileAsync(path.join(__dirname, `/../../${f}`), 'utf8');
+                debug("readLocal Deprecated; use readLocalAsync(__dirname, f)");
+            },
+            readLocalAsync: (dn, f) => {
+                let ff = path.join(dn, f);
+                debug(`Reading local file: '${ff}'`);
+                return fs.readFileAsync(ff, 'utf8');
+            }
         },
         $yaml: yaml.safeLoad,
         $r: read,
-        $t: moment
-    }
+        $t: moment,
+        $exec: execAsync
+    };
 }
 
-module.exports = mod()
+module.exports = mod();
