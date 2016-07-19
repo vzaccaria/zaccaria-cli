@@ -15,6 +15,7 @@ var tmp = require("tmp");
 var yaml = require("js-yaml");
 var moment = require("moment");
 var debug = require("debug");
+var messages = require("./lib/messages");
 
 debug = debug("zaccaria-cli");
 
@@ -102,8 +103,8 @@ var mod = function () {
         $fs: fs,
         $f: {
             readLocal: function (f) {
-                fs.readFileAsync(path.join(__dirname, "/../../" + f), "utf8");
                 debug("readLocal Deprecated; use readLocalAsync(__dirname, f)");
+                return fs.readFileAsync(path.join(__dirname, "/../../" + f), "utf8");
             },
             readLocalAsync: function (dn, f) {
                 var ff = path.join(dn, f);
@@ -114,7 +115,8 @@ var mod = function () {
         $yaml: yaml.safeLoad,
         $r: read,
         $t: moment,
-        $exec: execAsync
+        $exec: execAsync,
+        $g: messages
     };
 };
 
